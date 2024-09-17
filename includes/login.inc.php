@@ -3,7 +3,7 @@ if (isset($_POST['login-submit'])) {
 
     require 'config.inc.php';
 
-    // Retrieve input data
+    // Retrieve and sanitize input data
     $roll = $_POST['student_roll_no'];
     $password = $_POST['pwd'];
 
@@ -12,11 +12,12 @@ if (isset($_POST['login-submit'])) {
         header("Location: ../index.php?error=emptyfields");
         exit();
     } else {
-        // Prepare and execute SQL query
+        // Prepare SQL query to prevent SQL injection
         $sql = "SELECT * FROM Student WHERE Student_id = ?";
         $stmt = mysqli_prepare($conn, $sql);
 
         if (!$stmt) {
+            // Handle SQL error
             header("Location: ../index.php?error=sqlerror");
             exit();
         }
@@ -25,6 +26,7 @@ if (isset($_POST['login-submit'])) {
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
+        // Check if a row was returned
         if ($row = mysqli_fetch_assoc($result)) {
             // Verify password
             if (password_verify($password, $row['Pwd'])) {
@@ -51,11 +53,14 @@ if (isset($_POST['login-submit'])) {
             exit();
         }
 
+        // Close statement
         mysqli_stmt_close($stmt);
     }
 
+    // Close connection
     mysqli_close($conn);
 } else {
+    // Redirect if form was not submitted
     header("Location: ../index.php");
     exit();
 }
