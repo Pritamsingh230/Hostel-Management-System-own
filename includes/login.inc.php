@@ -3,8 +3,8 @@ if (isset($_POST['login-submit'])) {
 
     require 'config.inc.php';
 
-    // Retrieve and sanitize input data
-    $roll = mysqli_real_escape_string($conn, $_POST['student_roll_no']);
+    // Retrieve input data
+    $roll = $_POST['student_roll_no'];
     $password = $_POST['pwd'];
 
     // Check if inputs are empty
